@@ -5,7 +5,7 @@ const server = require("http").Server(app);
 const io = require("socket.io").listen(server);
 
 app.get("/", (req, res) => {
-  res.end("hello");
+  res.end("welcome");
 });
 let rooms = 0;
 
