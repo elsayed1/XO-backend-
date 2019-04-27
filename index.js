@@ -4,13 +4,8 @@ const server = require("http").Server(app);
 
 const io = require("socket.io").listen(server);
 
-io.configure(function() {
-  io.set("transports", ["xhr-polling"]);
-  io.set("polling duration", 10);
-});
-
 app.get("/", (req, res) => {
-  res.end("welcome");
+  res.end("hellooo");
 });
 let rooms = 0;
 
@@ -58,5 +53,5 @@ io.on("connection", socket => {
     socket.broadcast.to(data.room).emit("gameEnd", data);
   });
 });
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 server.listen(port, () => console.log("server is runnig on port" + port));
