@@ -4,6 +4,11 @@ const server = require("http").Server(app);
 
 const io = require("socket.io").listen(server);
 
+io.configure(function() {
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
+});
+
 app.get("/", (req, res) => {
   res.end("welcome");
 });
