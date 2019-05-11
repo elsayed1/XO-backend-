@@ -20,13 +20,19 @@ io.on("connection", socket => {
     });
   });
 
+  // return the player1 name to the player2
+  socket.on("player2", ({ player1, roomName }) => {
+    socket.broadcast.to(roomName).emit("data", { player1 });
+  });
+
   // Connect the Player 2 to the room he requested. Show error if room full.
   socket.on("join game", data => {
     var room = io.nsps["/"].adapter.rooms[data.roomName];
     if (room && room.length === 1) {
       socket.join(data.roomName);
-      socket.broadcast.to(data.roomName).emit("player1", {});
-      console.log(data.player2);
+      socket.broadcast
+        .to(data.roomName)
+        .emit("player1", { player2: data.player2 });
       socket.emit("player2", {
         player2: data.player2,
         roomName: data.roomName
