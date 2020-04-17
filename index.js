@@ -16,10 +16,10 @@ io.on("connection", socket => {
     socket.join(`room${++rooms}`);
     socket.emit("room created", {
       player1,
-      roomName: `room${rooms}`
+      roomName: `room${rooms}` 
     });
     socket.player=player1
-   // console.log(io.nsps["/"].adapter.rooms[`room1`].sockets)
+    // console.log(io.nsps["/"].adapter.rooms[`room1`].sockets)
     //console.log(io.sockets.connected[socket.id].player)
   });
 
@@ -59,7 +59,7 @@ io.on("connection", socket => {
   socket.on("gameEnded", data => {
     socket.broadcast.to(data.room).emit("gameEnd", data);
   });
-  
+
 });
 const port = process.env.PORT || 3000;
 server.listen(port, () => console.log("server is runnig on port" + port));
