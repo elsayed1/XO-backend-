@@ -12,37 +12,38 @@ let rooms = 0;
 io.on("connection", socket => {
   console.log("user connected ", socket.id);
   // Create a new game room and notify the creator of game.
-  socket.on("create game", player1 => {
-    socket.join(`room-${++rooms}`);
-    socket.emit("new game", {
+  socket.on("create room", player1 => {
+    socket.join(`room${++rooms}`);
+    socket.emit("room created", {
       player1,
-      roomName: `room-${rooms}`
+      roomName: `room${rooms}`
     });
-  });
-
-  // return the player1 name to the player2
-  socket.on("player2", ({ player1, roomName }) => {
-    socket.broadcast.to(roomName).emit("data", { player1 });
+    socket.player=player1
+   // console.log(io.nsps["/"].adapter.rooms[`room1`].sockets)
+    //console.log(io.sockets.connected[socket.id].player)
   });
 
   // Connect the Player 2 to the room he requested. Show error if room full.
-  socket.on("join game", data => {
-    var room = io.nsps["/"].adapter.rooms[data.roomName];
+  socket.on("join room", ({roomName,player2}) => {
+    var room = io.nsps["/"].adapter.rooms[roomName];
     if (room && room.length === 1) {
-      socket.join(data.roomName);
+      socket.join(roomName);
       socket.broadcast
-        .to(data.roomName)
-        .emit("player1", { player2: data.player2 });
-      socket.emit("player2", {
-        player2: data.player2,
-        roomName: data.roomName
-      });
+        .to(roomName)
+        .emit("player2 joined", { player2 });
     } else {
       socket.emit("err", {
         message: "Sorry, The room is full!"
       });
     }
   });
+
+  // return the player1 name to the player2
+  socket.on("player1 name", ({ player1, roomName }) => {
+    socket.broadcast.to(roomName).emit("player1 name", { player1 });
+  });
+
+
 
   // Handle the turn played by either player and notify the other.
   socket.on("playTurn", data => {
@@ -58,6 +59,7 @@ io.on("connection", socket => {
   socket.on("gameEnded", data => {
     socket.broadcast.to(data.room).emit("gameEnd", data);
   });
+  
 });
 const port = process.env.PORT || 3000;
 server.listen(port, () => console.log("server is runnig on port" + port));
